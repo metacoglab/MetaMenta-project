@@ -1,5 +1,4 @@
 # MetaMenta project
-The computation of confidence is modulated by mentalizing 
 
 This repository contains analysis code and data for Van der Plas, Mason, Livingston, Craigie, Happe & Fleming (in prep) “Computations of confidence are modulated by mentalizing” [..]
 
