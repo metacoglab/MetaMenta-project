@@ -55,6 +55,7 @@ leg2 = xline(HDI(1), '--', 'color', color_TOM{2}, 'linewidth', 2);
 xline(HDI(2), '--', 'color', color_TOM{2}, 'linewidth', 2)
 xline(0, '-', 'color', 'k', 'linewidth', 1)
 ylabel('No. of samples', 'FontSize', 18);
+set(gca, 'XLim', [-0.05 0.15], 'YLim', [0 300], 'FontSize',22);
 xlabel('Posterior distribution', 'FontSize',18);
 xlim([-0.2 1.2])
 set(gcf, 'color', 'w')

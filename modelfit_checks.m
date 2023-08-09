@@ -23,6 +23,7 @@ xline(HDI(1), '--', 'color', 'k', 'linewidth', 2)
 xline(HDI(2), '--', 'color', 'k', 'linewidth', 2)
 xline(0, '-', 'color', 'k', 'linewidth', 1)
 ylabel('No. of samples', 'FontSize', 18);
+set(gca, 'XLim', [-0.05 0.15], 'YLim', [0 300], 'FontSize',22);
 xlabel('Meta', 'FontSize',18);
 xlim([0.65 0.85])
 
@@ -35,15 +36,19 @@ ylabel(name_var1, 'fontsize', 18);
 
 subplot(2,2,4)
 histogram(MODEL.mcmc.samples.mu_beta1(:),500,'facecolor', [0.6, 0.6, 0.6], 'edgecolor', [0.6, 0.6, 0.6], 'facealpha', 0.4);
-title(['95% HDI ' name_var1], 'fontsize', 20); 
+title(['95% HDI'], 'fontsize', 20); 
 HDI = calc_HDI(MODEL.mcmc.samples.mu_beta1(:));
+<<<<<<< HEAD
+text(HDI(1)+0.00005, 200, num2str(round(HDI,2)), 'FontSize', 20); 
+=======
 text(HDI(1), 235, num2str(round(HDI,2)), 'FontSize', 14); 
+>>>>>>> d09fc66f474a8bae6dc72fe26517b79d7efa5953
 xline(HDI(1), '--', 'color', 'k', 'linewidth', 2)
 xline(HDI(2), '--', 'color', 'k', 'linewidth', 2)
 xline(0, '-', 'color', 'k', 'linewidth', 1)
 ylabel('No. of samples', 'FontSize', 18);
-xlabel(name_var1, 'FontSize',18);
-xlim([-0.2 0.05])
+xlabel([{name_var1}; {'impact on Mratio (a.u.)'}], 'FontSize',18);
+set(gca, 'XLim', [-0.05 0.15], 'XTick', [-0.05:0.05:0.15], 'YLim', [0 300], 'FontSize',22);
 set(gcf, 'color', 'w')
 
 fig2 = figure; 

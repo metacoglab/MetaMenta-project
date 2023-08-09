@@ -39,7 +39,7 @@ if exp == 1
     errorbar(1:2, [dat{1,2}{2,2} dat{2,2}{2,2}], [dat{1,2}{4,2} dat{2,2}{4,2}], '.', 'Color', c.err*0.2 , 'LineWidth', 2);
     
     hline1 = line([0 22], [0,0], 'linestyle', '-', 'color', [0 0 0], 'linewidth', 0.7); %zeroline
-    set(gca, 'XLim', [0 3], 'XTick', 1:2, 'YLim', [-0.55 0.05],'YTick', -0.55:0.1:0.5, 'FontSize',axis_nr, 'XTickLabels', {'Low RAADS', 'High RAADS'}, 'Fontsize', 18);
+    set(gca, 'XLim', [0 3], 'XTick', 1:2, 'YLim', [-0.55 0.05],'YTick', -0.55:0.1:0.5, 'FontSize',axis_nr, 'XTickLabels', {'High RAADS', 'Low RAADS'}, 'Fontsize', 18);
     ylabel([{'logRT impact'};{'on confidence (a.u.)'}], 'FontSize', axis_text);
     set(gcf, 'color', 'w')
     
