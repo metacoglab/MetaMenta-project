@@ -4,6 +4,7 @@
 clear all; close all; fs = filesep;
 findpath = which('DataAnalysis_Exp1.m');
 baseDir = fileparts(findpath);
+dirData = [baseDir fs 'Data' fs 'Exp1' fs];
 addpath([baseDir fs 'myfunctions' fs 'HMeta-d' fs 'Matlab' fs]);
 addpath([baseDir fs 'myfunctions']);
 
@@ -11,7 +12,7 @@ addpath([baseDir fs 'myfunctions']);
 load([dirData 'allData.mat'])
 load([dirData 'allMetaData.mat'])
 
-%% Descriptive statistics on raw data
+%% 1) Descriptive statistics on raw data
 % correct RAADS-14 scores into units of 0-3 on each question to match previous literature
 data.RAADS = data.RAADS - 14;  
 data.RAADS_MENTA = data.RAADS_MENTA - 7;
@@ -75,7 +76,7 @@ for i = 1:length(metaData(1).nR_S1)
     end
 end
 
-%% correlations between autism scores and mentalising scores 
+%% 2) correlations between autism scores and mentalising scores 
 [rho_AQ_RAADS,pval_AQ_RAADS] = corr(data2.AQ10, data2.RAADS, 'Type', 'Spearman');
 [rho_MCQcat_RAADS,pval_MCQcat_RAADS] = corr(data2.MCQ_cat, data2.RAADS, 'Type', 'Spearman');
 [rho_MCQfeelings_RAADS,pval_MCQfeelings_RAADS] = corr(data2.MCQ_feelings, data2.RAADS, 'Type', 'Spearman');
@@ -89,22 +90,9 @@ fitlm(data_z, 'MCQ_cat~RAADS+age+gender+education+IQ')
 fitlm(data_z, 'MCQ_feelings~AQ10+age+gender+education+IQ')
 fitlm(data_z, 'MCQ_feelings~RAADS+age+gender+education+IQ')
 
-%% Hypothesis 1
-%step 1: simultaneous HMeta-d' hierarchical regression
-FIT1 = fit_meta_d_mcmc_regression(metaData(1).nR_S1, metaData(1).nR_S2, data.MCQ_feelings');
-cd(baseDir)
-[fig1, fig2, fig3] = modelfit_checks(FIT1, data1.metaR, data1.MCQ_feelings, 'Menta');
-% compute probability
-samples = FIT1.mcmc.samples.mu_beta1 > 0;
-p_theta = 1 - ((sum(samples(:) == 0))/(sum(samples(:))));
+%% 3) Relationships with mentalising
 
-%step 2: frequentist linear model w/ covariates
-fitlm(data1, 'metaR~MCQ_feelings+age+gender+education+IQ')
-%NB, for "distinct constructions of confidence in mentalizing" see 'hierarchicalRegression_Exp1.r' script
-
-% [fig4] = betaPlot(1); %%plot the coefficients (Figure 3a)
-
-%% Relationship between metacognitive efficiency and MCQ_categorisation 
+%% 3a) Relationship between metacognitive efficiency and MCQ_categorisation 
 %step 1: simultaneous HMeta-d' hierarchical regression
 fit_MCQcat = fit_meta_d_mcmc_regression(metaData(1).nR_S1, metaData(1).nR_S2, data_z.MCQ_cat');
 cd(baseDir)
@@ -126,12 +114,12 @@ ylabel(['MCQ-cat'], 'FontSize',34);
 set(gca, 'FontSize',24)
 set(gcf, 'color', 'w');
 
-%% Relationship between metacognitive efficiency and MCQ_feelings
+%% 3b) Relationship between metacognitive efficiency and MCQ_feelings
 %% Hypothesis 1
 %step 1: simultaneous HMeta-d' hierarchical regression
 fit_MCQfeelings = fit_meta_d_mcmc_regression(metaData(1).nR_S1, metaData(1).nR_S2, data_z.MCQ_feelings');
 cd(baseDir)
-[fig1, fig2] = modelfit_checks(fit_MCQfeelings, 'MCQ-feelings');
+[fig3, fig4] = modelfit_checks(fit_MCQfeelings, 'MCQ-feelings');
 % compute probability
 p_theta_mcqfeelings = sum(fit_MCQfeelings.mcmc.samples.mu_beta1(:) > 0)./(length(fit_MCQfeelings.mcmc.samples.mu_beta1(:)));
 
@@ -150,16 +138,36 @@ ylabel(['MCQ-feelings'], 'FontSize',34);
 set(gca, 'FontSize',24)
 set(gcf, 'color', 'w');
 
-%% Relationship between metacognitive efficiency and RAADS
+%% 4) Relationship between metacognitive efficiency and RAADS
+
 %step 1 - RAADS: simultaneous HMeta-d' hierarchical regression
 fit_RAADS = fit_meta_d_mcmc_regression(metaData(2).nR_S1, metaData(2).nR_S2, data2.RAADS');
 cd(baseDir)
-[fig4, fig5] = modelfit_checks(fit_RAADS, 'RAADS-14');
-% compute probability
-p_theta_RAADS = sum(fit_RAADS.mcmc.samples.mu_beta1(:) > 0)./(length(fit_RAADS.mcmc.samples.mu_beta1(:)));
+[fig5, fig6] = modelfit_checks(fit_RAADS, 'RAADS-14');
+% compute probability (negative, so use less than)
+p_theta_RAADS = sum(fit_RAADS.mcmc.samples.mu_beta1(:) < 0)./(length(fit_RAADS.mcmc.samples.mu_beta1(:)));
 
 %step 2 - RAADS: frequentist linear model w/ covariates
 fitlm(data1_z, 'metaR~RAADS+age+gender+education+IQ')
 
-%NB, for "distinct constructions of confidence in RAADS" see 'hierarchicalRegression_Exp1.r' script
+%% 4a) Relationship between metacognitive efficiency and RAADS-M
 
+fit_RAADS_M = fit_meta_d_mcmc_regression(metaData(2).nR_S1, metaData(2).nR_S2, data2.RAADS_MENTA');
+cd(baseDir)
+[fig7, fig8] = modelfit_checks(fit_RAADS_M, 'RAADS-14 mentalising');
+% compute probability (negative, so use less than)
+p_theta_RAADS_M = sum(fit_RAADS_M.mcmc.samples.mu_beta1(:) < 0)./(length(fit_RAADS_M.mcmc.samples.mu_beta1(:)));
+
+%step 2 - RAADS: frequentist linear model w/ covariates
+fitlm(data1_z, 'metaR~RAADS_MENTA+age+gender+education+IQ')
+
+%% 4b) Relationship between metacognitive efficiency and RAADS-NS
+
+fit_RAADS_NS = fit_meta_d_mcmc_regression(metaData(2).nR_S1, metaData(2).nR_S2, data2.RAADS_NS');
+cd(baseDir)
+[fig9, fig10] = modelfit_checks(fit_RAADS_NS, 'RAADS-14 non-mentalising');
+% compute probability (negative, so use less than)
+p_theta_RAADS_NS = sum(fit_RAADS_NS.mcmc.samples.mu_beta1(:) < 0)./(length(fit_RAADS_NS.mcmc.samples.mu_beta1(:)));
+
+%step 2 - RAADS: frequentist linear model w/ covariates
+fitlm(data1_z, 'metaR~RAADS_NS+age+gender+education+IQ')
