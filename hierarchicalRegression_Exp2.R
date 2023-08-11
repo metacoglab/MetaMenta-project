@@ -26,11 +26,6 @@ for (i in 1:length(files)){
   dat = rbind(dat,data)
 }
 
-ASDws = readMat(paste(asdDir, 'data_exp_27169-v8', '/', 'ws_v8.mat', sep = ""), header=T, sep = ",", )
-CTLws = readMat(paste(asdDir, 'ws_comparisons.mat', sep = ""), header = T, sep = ",",)
-
-MCQ_emo = c(t(CTLws$MCQ.feelings), t(ASDws$MCQ.feelings))
-
 ASD = read.csv2(paste(asdDir, current_recruitment, '/','total_IDs_v8.csv', sep = ""), header = T, sep = ",",)
 CTL = read.csv2(paste(asdDir, current_recruitment, '/','selected_comparisons.csv', sep = ""), header = T, sep=",",)
 asdIDs = ASD$prolific_ID
@@ -62,8 +57,7 @@ for (s in 1:length(asdIDs)){
   #get all vars behind each other per subject
   subj = rep(s, length(acc))
   group = rep(-0.5, length(acc))
-  menta = rep(MCQ_emo[s], length(acc))
-  subData1 = data.frame("subj"=subj, "group"=group, "dir"=dir,"acc"=acc, "conf"=conf, "logRT"=logRT, "menta"=menta)
+  subData1 = data.frame("subj"=subj, "group"=group, "dir"=dir,"acc"=acc, "conf"=conf, "logRT"=logRT)
   
   #add to larger file 
   asdData = rbind(asdData, subData1)
@@ -111,8 +105,7 @@ for (s in 1:length(ctlIDS))
   #get all vars behind each other per subject
   subj = rep(s, length(acc)) + 40
   group = rep(0.5, length(acc))
-  menta = rep(MCQ_emo[s+40], length(acc))
-  subData2 = data.frame("subj"=subj,"group"=group, "dir"=dir, "acc"=acc, "conf"=conf, "logRT"=logRT, "menta"=menta)
+  subData2 = data.frame("subj"=subj,"group"=group, "dir"=dir, "acc"=acc, "conf"=conf, "logRT"=logRT)
     
   #add to larger file 
   CTLData = rbind(CTLData, subData2)
@@ -125,7 +118,7 @@ bigData$group <- factor(bigData$group, labels=c("ASD", "comparison"))
 # skip rows with NaNs
 bigData_clean <- na.omit(bigData)
 
-#Conduct a hierarchical regression to see if interaction w/ RAADS can explain how much confidence is influenced by standardized log RT
+#Conduct a hierarchical regression to see if interaction w/ ASD can explain how much confidence is influenced by standardized log RT
 confModel_noASD = lmer(conf ~ acc + logRT + acc * logRT + (1 + acc + logRT|subj), data=bigData_clean
                         , control = lmerControl(optimizer = "optimx", calc.derivs = FALSE, optCtrl = list(method = "bobyqa", starttests = FALSE, kkt = FALSE)))
 

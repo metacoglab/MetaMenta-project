@@ -4,7 +4,7 @@
 clear all; close all; fs = filesep;
 findpath = which('DataAnalysis_Exp1.m');
 baseDir = fileparts(findpath);
-dirData_clinical = [baseDir 'Data' fs 'Exp2' fs];
+dirData_clinical = [baseDir fs 'Data' fs 'Exp2' fs];
 scriptDir = [baseDir 'Analyses' fs];
 addpath([baseDir fs 'myfunctions' fs 'HMeta-d' fs 'Matlab' fs]);
 addpath([baseDir fs 'myfunctions']);
@@ -47,9 +47,39 @@ fitlm(Data1, 'metaR~group+age+gender+edu+IQ')
 
 %step 2 - ASD: simultaneous HMeta-d' hierarchical regression
 Data4 = Data(find(~isnan(Data.iq)),:);
-cov_CTL = [Data4.age(35:end)'; Data4.edu(35:end)';Data4.gender(35:end)'; Data4.iq(35:end)'];  
-cov_ASD = [Data4.age(1:35)'; Data4.edu(1:35)';Data4.gender(1:35)'; Data4.iq(1:35)'];
-FIT2.ASDregr = fit_meta_d_mcmc_regression(metaData{1}.nR_S1, metaData{1}.nR_S2, cov_ASD); %%TO DO remove ASD: 9, 14, 18, 26, 36
-FIT2.CTLregr = fit_meta_d_mcmc_regression(metaData{2}.nR_S1, metaData{2}.nR_S2, cov_CTL); %%TO DO remove CTL: 23
+ids_to_exclude = find(isnan(Data.iq));
+j=1;
+for i = 1:length(metaData{3}.nR_S1)
+    if ~any(i == ids_to_exclude)
+        metaData{4}.nR_S1{j} = metaData{3}.nR_S1{i};
+        metaData{4}.nR_S2{j} = metaData{3}.nR_S2{i};
+        j=j+1;
+    end
+end
+ASD_group = Data4.group == 0.5;
+
+cov_CTL = [Data4.age(~ASD_group)'; Data4.edu(~ASD_group)';Data4.gender(~ASD_group)'; Data4.iq(~ASD_group)'];  
+cov_ASD = [Data4.age(ASD_group)'; Data4.edu(ASD_group)';Data4.gender(ASD_group)'; Data4.iq(ASD_group)'];
+j=1; k=1;
+for i = 1:length(metaData{4}.nR_S1)
+    if ASD_group(i) == 1
+        metaData_ASD.nR_S1{j} = metaData{4}.nR_S1{i};
+        metaData_ASD.nR_S2{j} = metaData{4}.nR_S2{i};
+        j=j+1;
+    else
+        metaData_CTL.nR_S1{k} = metaData{4}.nR_S1{i};
+        metaData_CTL.nR_S2{k} = metaData{4}.nR_S2{i};
+        k=k+1;
+    end
+end
+
+FIT2.ASDregr = fit_meta_d_mcmc_regression(metaData_ASD.nR_S1, metaData_ASD.nR_S2, cov_ASD); 
+FIT2.CTLregr = fit_meta_d_mcmc_regression(metaData_CTL.nR_S1, metaData_CTL.nR_S2, cov_CTL);
 cd(baseDir)
 [fig4, fig5] = groupModelfit_checks(FIT2.ASDregr, FIT2.CTLregr,Data.metaR);
+
+% Same group comparison without covariates 
+FIT2.ASD = fit_meta_d_mcmc_group(metaData{1}.nR_S1, metaData{1}.nR_S2); 
+FIT2.CTL = fit_meta_d_mcmc_group(metaData{2}.nR_S1, metaData{2}.nR_S2);
+cd(baseDir)
+[fig4, fig5] = groupModelfit_checks(FIT2.ASD, FIT2.CTL,Data.metaR);
