@@ -14,7 +14,7 @@ AQ_C = 0;
 AQ_S = 0; 
 AQ_I = 0;
     
-for i = [4,10,7,3,5,6] %reverse keyed items
+for i = [4,10,7,3,5,6] %reverse keyed items, note these are the order of the items as presented in Gorilla, not the order in the original questionairre 
     ratings(i) = 5-ratings(i);
 end
 

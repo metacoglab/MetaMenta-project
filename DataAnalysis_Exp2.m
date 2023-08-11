@@ -2,7 +2,8 @@
 %elisavanderplasATgmail.com
 
 clear all; close all; fs = filesep;
-baseDir =  ['~' fs 'Dropbox' fs 'MetaMenta-project' fs];
+findpath = which('DataAnalysis_Exp1.m');
+baseDir = fileparts(findpath);
 dirData_clinical = [baseDir 'Data' fs 'Exp2' fs];
 scriptDir = [baseDir 'Analyses' fs];
 addpath([baseDir fs 'myfunctions' fs 'HMeta-d' fs 'Matlab' fs]);
@@ -32,10 +33,7 @@ Data2 = Data(find(~isnan(Data.RAADS)),:);
 
 %independent samples ttest accuracy, line 490
 [H,P,CI, STATS] = ttest2(Data.acc(1:40), Data.acc(41:end));
-<<<<<<< HEAD
-=======
 [H,P,KSSTAT] = kstest2(Data.acc(1:40), Data.acc(41:end));
->>>>>>> d09fc66f474a8bae6dc72fe26517b79d7efa5953
 
 %NB. for the mixed-effect hierarchical regression model, see:
 %hierarchicalRegression_Exp2.R
@@ -55,9 +53,3 @@ FIT2.ASDregr = fit_meta_d_mcmc_regression(metaData{1}.nR_S1, metaData{1}.nR_S2, 
 FIT2.CTLregr = fit_meta_d_mcmc_regression(metaData{2}.nR_S1, metaData{2}.nR_S2, cov_CTL); %%TO DO remove CTL: 23
 cd(baseDir)
 [fig4, fig5] = groupModelfit_checks(FIT2.ASDregr, FIT2.CTLregr,Data.metaR);
-
-<<<<<<< HEAD
-=======
-[fig6] = betaPlot(2); %%plot the coefficients (Figure 3C)
->>>>>>> d09fc66f474a8bae6dc72fe26517b79d7efa5953
-

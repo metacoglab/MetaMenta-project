@@ -20,7 +20,7 @@ sessions = c('v38', 'v39', 'v40', 'v41', 'v42', 'v43')
 #load in all task data
 for (i in 1:length(sessions)){ 
   currentData = paste('data_exp_12022-',sessions[i],sep="")
-  dataDir = "~/Dropbox/InPrep/Autism/Code/MetaMenta-project/Data/Exp1/" 
+  dataDir = "~/Dropbox/InPrep/Autism/Code/MetaMenta-project-github/Data/Exp1/" 
   Dir = paste(dataDir,currentData, '/', sep="")
   files = c('_task-pf6t', '_task-yzt9')
   for (j in 1:length(files)){
