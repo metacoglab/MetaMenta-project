@@ -18,7 +18,6 @@ p_theta = (sum(temp(:) == 1))/30000;
 fprintf(('\n Probability that sample difference is lower than zero: %.2f'), p_theta); 
 
 fig1 = figure;
-subplot(1,3,1)
 hold on 
 for i = 1:40
     r = -0.065 + (0.065+0.065).*rand(1,1);
@@ -42,7 +41,7 @@ legend boxoff
 texthandle = findobj(handle, 'type', 'text');
 set(texthandle,'FontSize',15);
 
-subplot(1,3,2)
+fig2 = figure;
 hold all
 title('95% HDI', 'fontsize', 20); 
 HDI = calc_HDI(exp(MODEL1.mcmc.samples.mu_logMratio(:)));
@@ -67,15 +66,6 @@ legend boxoff
 texthandle = findobj(handle, 'type', 'text');
 set(texthandle,'FontSize',15);
 hold off
-
-cd("~/Dropbox/MetaMenta/Analyses")
-subplot(1,3,3) = betaPlot(2);
-
-fig2 = figure;
-subplot(1,2,1)
-set(gcf, 'Units', 'normalized');
-set(gcf, 'Position', [0.2 0.2 0.5 0.5]);
-set(gcf, 'color', 'w')
 
 Nsub = length(MODEL2.d1);
 ts = tinv([0.05/2,  1-0.05/2],Nsub-1);

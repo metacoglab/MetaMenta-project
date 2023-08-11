@@ -1,4 +1,4 @@
-function [fig1, fig2, fig3] = modelfit_checks(MODEL, var1, var2, name_var1)
+function [fig1, fig2] = modelfit_checks(MODEL, name_var1)
 
 %% takes as input a HMeta-d regression model fit, as well as the group level metacognition (var1) and the dependent variable (var2)
 %% returns the trace plot and posterior density histogram plot (fig1), and a correlation plot between var1 and var2 (fig2), 
@@ -10,46 +10,43 @@ color_TOM = {[0.129, 0.050, 0.568], [0.960, 0.325, 0.019]};%http://doc.instantre
 fig1 = figure;
 subplot(2,2,1)
 plot(exp(MODEL.mcmc.samples.mu_logMratio')) 
-title(['Rhat: ' num2str(MODEL.mcmc.Rhat.mu_logMratio)], 'fontsize', 18);
-xlabel('Sample', 'fontsize', 18);
-ylabel('Meta', 'fontsize', 18);
+title(['Rhat: ' num2str(MODEL.mcmc.Rhat.mu_logMratio)], 'fontsize', 12);
+xlabel('Sample', 'fontsize', 14);
+ylabel('\mu_{meta-d''/d''}', 'fontsize', 14);
+box off
 
 subplot(2,2,2)
 histogram(exp(MODEL.mcmc.samples.mu_logMratio(:)),500, 'facecolor', [0.6, 0.6, 0.6], 'edgecolor', [0.6, 0.6, 0.6], 'facealpha', 0.4);
-title('95% HDI Mratio', 'fontsize', 20); 
+title('Group-level Mratio', 'fontsize', 12); 
 HDI = calc_HDI(exp(MODEL.mcmc.samples.mu_logMratio(:)));
-text(HDI(1), 235, num2str(round(HDI,2)), 'FontSize', 14); 
-xline(HDI(1), '--', 'color', 'k', 'linewidth', 2)
-xline(HDI(2), '--', 'color', 'k', 'linewidth', 2)
+% text(HDI(1), 235, num2str(round(HDI,2)+0.01), 'FontSize', 14); 
+xline(mean(exp(MODEL.mcmc.samples.mu_logMratio(:))), '-', 'color', 'b', 'linewidth', 2)
 xline(0, '-', 'color', 'k', 'linewidth', 1)
-ylabel('No. of samples', 'FontSize', 18);
-set(gca, 'XLim', [-0.05 0.15], 'YLim', [0 300], 'FontSize',22);
-xlabel('Meta', 'FontSize',18);
-xlim([0.65 0.85])
+ylabel('No. of samples', 'FontSize', 14);
+xlabel('\mu_{meta-d''/d''}', 'FontSize',14);
+set(gca, 'XLim', [0.65 0.85], 'YLim', [0 300]);
+box off
 
 subplot(2,2,3)
 hold all
 plot(MODEL.mcmc.samples.mu_beta1') 
-title(['Rhat: ' num2str(MODEL.mcmc.Rhat.mu_beta1)], 'fontsize', 18);
-xlabel('Sample', 'fontsize', 18);
-ylabel(name_var1, 'fontsize', 18);
+title(['Rhat: ' num2str(MODEL.mcmc.Rhat.mu_beta1)], 'fontsize', 12);
+xlabel('Sample', 'fontsize', 14);
+ylabel(name_var1, 'fontsize', 14);
+box off
 
 subplot(2,2,4)
 histogram(MODEL.mcmc.samples.mu_beta1(:),500,'facecolor', [0.6, 0.6, 0.6], 'edgecolor', [0.6, 0.6, 0.6], 'facealpha', 0.4);
-title(['95% HDI'], 'fontsize', 20); 
+title(['Beta of regression with ' name_var1], 'fontsize', 12); 
 HDI = calc_HDI(MODEL.mcmc.samples.mu_beta1(:));
-<<<<<<< HEAD
-text(HDI(1)+0.00005, 200, num2str(round(HDI,2)), 'FontSize', 20); 
-=======
-text(HDI(1), 235, num2str(round(HDI,2)), 'FontSize', 14); 
->>>>>>> d09fc66f474a8bae6dc72fe26517b79d7efa5953
-xline(HDI(1), '--', 'color', 'k', 'linewidth', 2)
-xline(HDI(2), '--', 'color', 'k', 'linewidth', 2)
+xline(0, '-', 'color', 'k', 'linewidth', 2)
+ylabel('No. of samples', 'FontSize', 14);
+xlabel(name_var1, 'FontSize', 14);
+xlim([-0.05 0.1])
 xline(0, '-', 'color', 'k', 'linewidth', 1)
-ylabel('No. of samples', 'FontSize', 18);
-xlabel([{name_var1}; {'impact on Mratio (a.u.)'}], 'FontSize',18);
-set(gca, 'XLim', [-0.05 0.15], 'XTick', [-0.05:0.05:0.15], 'YLim', [0 300], 'FontSize',22);
+set(gca, 'XLim', [-0.05 0.15], 'YLim', [0 300]);
 set(gcf, 'color', 'w')
+box off
 
 fig2 = figure; 
 set(gcf, 'Units', 'normalized');
@@ -123,16 +120,6 @@ box off
 legend('Data', 'Model', 'Location', 'SouthEast')
 legend boxoff
 title('Response = S2')
-
-
-fig3 = figure;
-scatter(var1, var2',70,'Marker', 'o', 'MarkerFaceColor',[0.5, 0.5, 0.5],'LineWidth',2);
-hLine = refline; 
-hLine.Color = 'k'; 
-hLine.LineWidth = 5;
-xlabel('log Mratio (z-score)', 'FontSize', 26);
-ylabel([name_var1 ' (z-score)'], 'FontSize',26);
-set(gcf, 'color', 'w');
 
 
 end
