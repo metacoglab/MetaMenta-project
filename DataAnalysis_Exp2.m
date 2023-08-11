@@ -18,6 +18,24 @@ load([dirData_clinical 'allDotsData.mat'])
 metaData{3}.nR_S1 = [metaData{1}.nR_S1, metaData{2}.nR_S1];
 metaData{3}.nR_S2 = [metaData{1}.nR_S2, metaData{2}.nR_S2];
 
+% Get means and SDs for table (ASD = 1, CTL = 2)
+mean_age(1) = nanmean(Data.age(Data.group == 0.5));
+sd_age(1) = nanstd(Data.age(Data.group == 0.5));
+mean_age(2) = nanmean(Data.age(Data.group ~= 0.5));
+sd_age(2) = nanstd(Data.age(Data.group ~= 0.5));
+mean_age(1) = nanmean(Data.age(Data.group == 0.5));
+sd_age(1) = nanstd(Data.age(Data.group == 0.5));
+mean_age(2) = nanmean(Data.age(Data.group ~= 0.5));
+sd_age(2) = nanstd(Data.age(Data.group ~= 0.5));
+mean_MCQcat(1) = nanmean(Data.MCQ_cat(Data.group == 0.5).*12);
+sd_MCQcat(1) = nanstd(Data.MCQ_cat(Data.group == 0.5).*12);
+mean_MCQcat(2) = nanmean(Data.MCQ_cat(Data.group ~= 0.5).*12);
+sd_MCQcat(2) = nanstd(Data.MCQ_cat(Data.group ~= 0.5).*12);
+mean_MCQfeelings(1) = nanmean(Data.MCQ_feelings(Data.group == 0.5).*8);
+sd_MCQfeelings(1) = nanstd(Data.MCQ_feelings(Data.group == 0.5).*8);
+mean_MCQfeelings(2) = nanmean(Data.MCQ_feelings(Data.group ~= 0.5).*8);
+sd_MCQfeelings(2) = nanstd(Data.MCQ_feelings(Data.group ~= 0.5).*8);
+
 %zscore all variables in the table
 Data.MCQ_feelings = zscore(Data.MCQ_feelings);
 Data.edu = zscore(Data.edu); 
